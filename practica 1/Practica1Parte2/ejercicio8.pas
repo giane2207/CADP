@@ -1,0 +1,36 @@
+//Un local de ropa desea analizar las ventas realizadas en el último mes. Para ello se lee por cada día
+//del mes, los montos de las ventas realizadas. La lectura de montos para cada día finaliza cuando se
+//lee el monto 0. Se asume un mes de 31 días. Informar la cantidad de ventas por cada día, y el monto
+//total acumulado en ventas de todo el mes.
+//a. Modifique el ejercicio anterior para que además informe el día en el que se realizó la mayor
+//cantidad de ventas.
+
+program ej8p1p2;
+
+type
+
+  dias = 1..31;
+  
+var 
+ montoDia, montoTotalMes: real;
+ ventasDia: integer;
+ i: dias;
+begin 
+  montoTotalMes:= 0;
+  for i:= 1 to 3 do 
+   begin
+     writeln ('Dia: ', i);
+     writeln ('Ingrese el monto de la venta realizada: ');
+     readln (montoDia);
+     ventasDia:= 0;
+     while (montoDia <> 0) do 
+       begin
+         montoTotalMes:= montoTotalMes + montoDia;
+         ventasDia:= ventasDia + 1;
+         writeln ('Ingrese el monto de la venta realizada: ');
+         readln (montoDia);
+       end;
+     writeln ('La cantidad de ventas del dia ', i , ' fueron: ', ventasDia);
+   end;
+  writeln ('El monto total acumulado en las ventas del mes fue: ', montoTotalMes:1:2);
+end.
