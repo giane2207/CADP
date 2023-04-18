@@ -32,18 +32,14 @@ var
 begin
   writeln ('Ingrese la secuencia de B');
   readln (c);
-  arroba:= 0;
-  if (c = '@') then begin
-    arroba:= arroba + 1;
-   end;
-  while (c <> '*') and (arroba < 4) and (CantEnA > 0) do begin
+  arroba:= 3;
+  while (c <> '*') and (arroba > 0) and (CantEnA > 0) do begin
     CantEnA:= cantEnA - 1;
-    writeln
-    ('Ingrese la secuencia de B');
-    readln (c);    
     if (c = '@') then begin
-      arroba:= arroba + 1;
-     end;
+      arroba:= arroba -1;
+    end;    
+    writeln ('Ingrese la secuencia de B');
+    readln (c);
   end;
   cumple:= (c= '*') and (CantEnA > 0);
 end;
