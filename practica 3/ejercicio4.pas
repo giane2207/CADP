@@ -29,8 +29,10 @@ type
 
 procedure leerCliente (var c: tclientes);
 begin
-  writeln ('Ingrese codigo de cliente: '); readln (c.codcliente); 
-  writeln ('Ingrese cantidad de lineas: ');readln (c.cantlineas); 
+  writeln ('Ingrese codigo de cliente: '); 
+  readln (c.codcliente); 
+  writeln ('Ingrese cantidad de lineas: ');
+  readln (c.cantlineas); 
 end;
 
 procedure leerLinea (var lin: tlineas);
