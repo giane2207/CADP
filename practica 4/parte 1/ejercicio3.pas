@@ -31,10 +31,11 @@ procedure incisoC (v: vector; dimL: integer);
 var 
   i: integer;
 begin
-   for i:= ((dimL DIV 2)+ 1)downto 1 do begin      
+   for i:= (dimL DIV 2 )downto 1 do begin      
         write (v[i], ', ');
    end; 
-   for i:= (dimL DIV 2 ) to dimL do begin    
+   writeln ('--');
+   for i:= (dimL DIV 2 + 1) to dimL do begin    
         write (v[i], ', ');
    end; 
 end;        
