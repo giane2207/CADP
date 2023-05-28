@@ -63,22 +63,18 @@ begin
      EsPar:= valor MOD 2 = 0;
 end;
 
-function Almenos3Pares (num: integer): boolean;
+function CantPares (num: integer): integer;
 var
-     ok: boolean; 
-     aux: integer;
+     cant, resto: integer;
 begin
-     ok:= false;
-     aux:= 3;
-     while (num <> 0) and (aux <> 0) do begin
-         if (EsPar(num)) then begin
-             aux:= aux - 1;
-         end;
+     cant:= 0;
+     while (num <> 0 ) do begin
+         resto:= num MOD 10;
+         if (EsPar (resto)) then
+             cant:= cant + 1;
          num:= num DIV 10;
      end;
-     if (aux = 0) then 
-         ok:= true;
-     Almenos3Pares:= ok;
+	 CantPares:= cant;
 end;
 
 procedure ProdsEconomicos (var min1, min2: real; var cod1,cod2: integer; precio: real; cod: integer);
@@ -108,7 +104,7 @@ begin
          if (L^.elem.stockAct < L^.elem.stockMin) then begin{si el stock actual es menor al stock minimo }
              cantStock:= cantStock + 1; {cuento uno para luego sacar el porcentaje}
          end;
-         if (Almenos3Pares(L^.elem.cod)) then begin
+         if (CantPares(L^.elem.cod) >= 3 ) then begin
              writeln ('Descripcion de aquellos productos con codigo compuesto por al menos tres digitos pares: ', L^.elem.descrip);
          end;
          ProdsEconomicos (min1, min2, cod1, cod2, L^.elem.precio, L^.elem.cod);
