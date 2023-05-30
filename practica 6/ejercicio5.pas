@@ -1,3 +1,10 @@
+{5. Realizar un programa que lea y almacene la información de productos de un supermercado. De cada
+producto se lee: código, descripción, stock actual, stock mínimo y precio. La lectura finaliza cuando se ingresa
+el código -1, que no debe procesarse. Una vez leída y almacenada toda la información, calcular e informar:
+a. Porcentaje de productos con stock actual por debajo de su stock mínimo.
+b. Descripción de aquellos productos con código compuesto por al menos tres dígitos pares.
+c. Código de los dos productos más económicos.}
+
 program ej5p6;
 type
      productos = record
@@ -30,29 +37,18 @@ begin
      end;
 end;
 
-procedure AgregarAlFinal (var pri: lista; p: productos);
+procedure AgregarAdelante (var pri: lista; p: productos);
 var
      nuevo: lista;
 begin
      new (nuevo);
-     nuevo^.elem:= p;
-     nuevo^.sig:= pri;
-     pri:= nuevo;
+     nuevo^.elem:= p; {guarda el producto nuevo}
+     nuevo^.sig:= pri;{hace el enlace con el primero de la lista para no perderlo}
+     pri:= nuevo; {ahora q se hizo el enlace actualizamos nuestro primer puntero}
      
 end;
 
-procedure CargarLista (var pri: lista; var cantTotal: integer);
-var
-     p: productos;
-begin
-     LeerProductos (p);
-     while (p.cod <> -1) do begin
-         cantTotal:= cantTotal + 1;
-         AgregarAlFinal (pri, p);
-         LeerProductos (p);
-     end;
-end;
-
+{a}
 function ElPorcentaje (CantTotal, cant: integer): real;
 begin
      ElPorcentaje:= (cant/cantTotal)* 100;
@@ -63,6 +59,7 @@ begin
      EsPar:= valor MOD 2 = 0;
 end;
 
+{b}
 function CantPares (num: integer): integer;
 var
      cant, resto: integer;
@@ -77,6 +74,7 @@ begin
 	 CantPares:= cant;
 end;
 
+{c}
 procedure ProdsEconomicos (var min1, min2: real; var cod1,cod2: integer; precio: real; cod: integer);
 begin
      if (precio < min1) then begin
@@ -92,16 +90,24 @@ begin
          end;
 end;
 
-procedure RecorrerLista (var porcentaje: real; var cod1, cod2: integer; var cantTotal: integer; L: lista); 
+function StockMenorQueMinimo (L: lista): boolean;
+begin
+     StockMenorQueMinimo:= (L^.elem.stockAct < L^.elem.stockMin);
+end;
+
+
+procedure RecorrerLista (var porcentaje: real; var cod1, cod2: integer; L: lista); 
 var
     min1, min2: real;
-    cantStock: integer;
+    cantStock, cantTotal: integer;
 begin
      min1:= 9999;
      min2:= 9999;
      cantStock:= 0;
+     cantTotal:= 0;
      while (L <> nil) do begin
-         if (L^.elem.stockAct < L^.elem.stockMin) then begin{si el stock actual es menor al stock minimo }
+         cantTotal:= cantTotal + 1; {llevo la cantidad total de productos}
+         if (StockMenorQueMinimo(L)) then begin{si el stock actual es menor al stock minimo }
              cantStock:= cantStock + 1; {cuento uno para luego sacar el porcentaje}
          end;
          if (CantPares(L^.elem.cod) >= 3 ) then begin
@@ -115,15 +121,18 @@ end;
 
 var
      L:lista;
-     cod1,cod2, cantTotal: integer;
+     cod1,cod2:integer;
      porcentaje: real;
-     
+     p: productos;
 begin
      L:=nil;
-     cantTotal:=0;
-     CargarLista (L, cantTotal);
-     RecorrerLista (porcentaje, cod1, cod2, cantTotal, L);    
+     LeerProductos(p);
+     while (p.cod <> -1) do begin
+         AgregarAdelante (L, p);
+         LeerProductos(p);
+     end;   
+     RecorrerLista (porcentaje, cod1, cod2, L);    
      writeln ('El porcentaje de productos con stock actual por debajo de su stock minimo es: ', porcentaje:0:1);
-     writeln ('Codigo de los dos productos más economicos son: ', cod1, ' y ', cod2);
+     writeln ('El codigo del producto mas economico es: ', cod1, ' seguido de ', cod2);
 end.
  
