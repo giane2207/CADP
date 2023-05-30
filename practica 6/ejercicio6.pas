@@ -114,7 +114,41 @@ begin
          if (L^.elem.duracion > dPromedio) then
              cantMayorDuracion:= cantDuracion + 1;
          if (L^.elem.costoC > cPromedio) then
-             nombreMayorProm:= 
+             nombreMayorProm:= L^.elem.nombre; {aca me equivoque, pense que era decir el nombre, no los nombres de cada uno :(}
+         L:=L^.sig;
+     end;
+end;
+
+procedure CargarVector (var v: vectorCont; categoria: integer);
+begin
+     v[categoria]:= v[categoria] + 1;
+
+procedure RecorrerLista (var v: vectorCont; var nombreCostosa: string; var sumaPrecio: real; var totalMeses: integer; L:lista);
+var
+     maxPrecio, CostoSonda: real;
+begin
+     sumaPrecios:= 0;
+     totalMeses:= 0;
+     maxPrecio:= -1;
+     while (L <> nil) do begin
+         sumaPrecios:= sumaPrecios + L^.elem.precio;
+         totalMeses:= totalMeses + L^.elem.duracion;
+         CostoSonda:= 0;
+         CostoSonda:= CalcularCostoTotal(L^.elem.costoC, L^.elem.costoM);
+         SondaCostosa (maxPrecio, nombreCostosa, CostoSonda, L^.elem.nombre);
+         CargarVector (v, L^.elem.categoria);
+         L:= L^.sig;
+     end;
+end;
+
+procedure ImprimirVector (v: vector);
+var i: integer;
+begin
+     for i:= 1 to cantCategorias do begin'
+         writeln ('En la categoria ', i, ' se realizaran ', v[i]), ' estudios');
+     end;
+end;
+
 
 
 
