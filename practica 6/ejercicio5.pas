@@ -48,10 +48,23 @@ begin
      
 end;
 
+procedure CargarLista (var L:lista);
+var
+     p:productos;
+begin
+     LeerProductos(p);
+     while (p.cod <> -1) do begin
+         AgregarAdelante(L, p);
+         LeerProductos(p);
+     end;
+end;
+
 {a}
 function ElPorcentaje (CantTotal, cant: integer): real;
 begin
-     ElPorcentaje:= (cant/cantTotal)* 100;
+     if (cant <> 0) then begin
+         ElPorcentaje:= (cant/cantTotal)* 100;
+     end;
 end;
 
 function EsPar (valor: integer): boolean;
@@ -123,14 +136,9 @@ var
      L:lista;
      cod1,cod2:integer;
      porcentaje: real;
-     p: productos;
 begin
      L:=nil;
-     LeerProductos(p);
-     while (p.cod <> -1) do begin
-         AgregarAdelante (L, p);
-         LeerProductos(p);
-     end;   
+     CargarLista (L);
      RecorrerLista (porcentaje, cod1, cod2, L);    
      writeln ('El porcentaje de productos con stock actual por debajo de su stock minimo es: ', porcentaje:0:1);
      writeln ('El codigo del producto mas economico es: ', cod1, ' seguido de ', cod2);
