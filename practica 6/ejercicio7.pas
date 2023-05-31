@@ -102,10 +102,10 @@ begin
      while (L <> nil) do begin
          if (CumpleFinanciar(L^.elem.costoC, L^.elem.costoM)) then 
              CargarListaCumplen (Lcumple, L)
-         else 
+         else begin
              CargarListaNoCumplen(LnoCumple, L);
              cantNoCumplen:= cantNoCumplen + 1;
-         
+         end;
          L:= L^.sig; {avanzo al siguiente nodo}
      end;
 end;
