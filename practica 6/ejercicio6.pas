@@ -13,11 +13,13 @@ d. El nombre de las sondas cuyo costo de construcción supera el costo promedio 
 Nota: para resolver los incisos a), b), c) y d), la lista debe recorrerse la menor cantidad de veces posible}
 
 program ej6p6;
+const 
+     Cantcategorias= 7;
 type
-     Cantcategorias:= 7
-     rangocategorias:= 1..cantCategorias;
+
+     rangocategorias= 1..cantCategorias;
      
-     sonda = record;
+     sonda = record
          nombre: string [20];
          duracion: integer; {en meses}
          costoC: real; {costo construccion}
@@ -25,10 +27,10 @@ type
          categoria: rangocategorias;
          end;
      
-     lista: ^nodo;
+     lista = ^nodo;
      
      nodo= record
-         elem: sondas;
+         elem: sonda;
          sig: lista;
          end;
      
@@ -39,15 +41,19 @@ type
 procedure LeerSondas (var s: sonda);
 begin
          writeln ('Ingrese nombre: ');
-         read (s.nombre);
+         readln (s.nombre);
+         
          writeln ('Ingrese duracion: ');
-         read (s.duracion);
+         readln(s.duracion);
+         
          writeln ('Ingrese costo de construccion: ');
-         read (s.costoC);
+         readln (s.costoC);
+         
          writeln ('Ingrese costo de mantenimiento: ');
-         read (s.costoM);
+         readln (s.costoM);
+         
          writeln ('Ingrese categoria: ');
-         read (s.categoria);
+         readln (s.categoria);
 end;
 
 procedure AgregarAdelante (var pri: lista; s: sonda);
@@ -62,7 +68,7 @@ end;
 
 procedure CargarLista (var pri: lista);
 var
-     s: sondas;
+     s: sonda;
 begin
      repeat
          LeerSondas(s);
@@ -74,7 +80,7 @@ procedure SondaCostosa (var maxPrecio: real; var maxNombre: string; precio: real
 begin
      if (precio > maxPrecio) then begin
          maxPrecio:= precio;
-         nombreMax:= nombre;
+         maxNombre:= nombre;
      end;
 end;     
 
@@ -97,73 +103,98 @@ begin
      CostoPromedio:= sumaPrecios/cantSondas;
 end;
 
-function CalcularCostoTotal (CostoConstruccion, CostoMantenimiento: real): real; {usar con variable e inicializarla cada vez q lea sonda siguiente}
+function CalcularCostoTotal (CostoConstruccion, CostoMantenimiento: real): real;
 begin
      CalcularCostoTotal:= CostoConstruccion + CostoMantenimiento;
 end;
 
-procedure Promedios (var cantMayorDuracion, cantSondas, totalMeses: integer; var nombreMayorProm: string; var sumaPrecios: real; L:lista);
+
+procedure Promedios (var dPromedio, cPromedio: real; L: lista);
 var
-     dPromedio: real;
-     cPromedio:real;
-    
-begin 
-     dPromedio:= DuracionPromedio(totalMeses, cantSondas);
-     cPromedio:= CostoPromedio(sumaPrecio, cantSondas);
-     while (L <> nil) do begin 
-         if (L^.elem.duracion > dPromedio) then
-             cantMayorDuracion:= cantDuracion + 1;
-         if (L^.elem.costoC > cPromedio) then
-             nombreMayorProm:= L^.elem.nombre; {aca me equivoque, pense que era decir el nombre, no los nombres de cada uno :(}
-         L:=L^.sig;
+     sumaPrecios: real;
+     totalMeses, cantSondas: integer;
+begin
+     totalMeses:=0;
+     cantSondas:= 0;
+     while (L <> nil) do begin
+         cantSondas:= cantSondas + 1;
+         sumaPrecios:= CalcularCostoTotal(L^.elem.costoC, L^.elem.costoM);
+         totalMeses:= totalMeses + L^.elem.duracion;
      end;
+     dPromedio:= DuracionPromedio (totalMeses, cantSondas);
+     cPromedio:= CostoPromedio(sumaPrecios, cantSondas);
+end;
+
+function superaCostoPromedio (costoSonda, costoPromedio: real): boolean;
+var 
+     ok: boolean;
+begin 
+     ok:= false;
+     if (costoSonda > costoPromedio) then
+         ok:= true;
+     superaCostoPromedio:= ok;
+end;
+
+function superaDuracionPromedio (duracion: integer; duracionPromedio: real): boolean;
+var 
+     ok: boolean;
+begin 
+     ok:= false;
+     if (duracion > duracionPromedio) then
+         ok:= true;
+     superaDuracionPromedio:= ok;
 end;
 
 procedure CargarVector (var v: vectorCont; categoria: integer);
 begin
      v[categoria]:= v[categoria] + 1;
+end;
 
-procedure RecorrerLista (var v: vectorCont; var nombreCostosa: string; var sumaPrecio: real; var totalMeses: integer; L:lista);
+procedure RecorrerLista (var v: vectorCont; var nombreCostosa: string; var cantSuperaDuracion: integer; L:lista);
 var
      maxPrecio, CostoSonda: real;
+     duracionPromedio, costoPromedio:real;
 begin
-     sumaPrecios:= 0;
-     totalMeses:= 0;
-     maxPrecio:= -1;
+     maxPrecio:= -1;    
+     cantSuperaDuracion:= 0;
+     Promedios (duracionPromedio, costoPromedio, L);
      while (L <> nil) do begin
-         sumaPrecios:= sumaPrecios + L^.elem.precio;
-         totalMeses:= totalMeses + L^.elem.duracion;
-         CostoSonda:= 0;
          CostoSonda:= CalcularCostoTotal(L^.elem.costoC, L^.elem.costoM);
          SondaCostosa (maxPrecio, nombreCostosa, CostoSonda, L^.elem.nombre);
          CargarVector (v, L^.elem.categoria);
+         if (superaCostoPromedio(costoSonda, costoPromedio)) then 
+             writeln ('el nombre de las sondas cuyo costo de construcción supera el costo promedio entre todas las sondas es: ', L^.elem.nombre, ' con un costo de: $', costoSonda);
+         if (superaDuracionPromedio(L^.elem.duracion, duracionPromedio)) then
+             cantSuperaDuracion:= cantSuperaDuracion +1;
          L:= L^.sig;
      end;
 end;
 
-procedure ImprimirVector (v: vector);
+procedure ImprimirVector (v: vectorCont);
 var i: integer;
 begin
-     for i:= 1 to cantCategorias do begin'
-         writeln ('En la categoria ', i, ' se realizaran ', v[i]), ' estudios');
+     for i:= 1 to cantCategorias do begin
+         writeln ('En la categoria ', i, ' se realizaran ', v[i], ' estudios');
      end;
 end;
 
+procedure Imprimir (cantSuperaDuracion: integer; nombreCostosa: string; v: vectorCont; L:lista);
+begin
+    if (L <> nil) then begin
+         ImprimirVector (v);
+         writeln ('El nombre de la sonda mas costosa es: ', nombreCostosa);
+         writeln ('La cantidad de sondas cuya duración estimada supera la duración promedio de todas las sondas es: ', cantSuperaDuracion);
+     end;
+end;
 
-
-
-
-
-
-
-
-
-
-     
-     
-     
-     
-     
-     
-     
-     
+var
+     cantSuperaDuracion: integer;
+     nombreCostosa: string;
+     L:lista;
+     v: vectorCont;
+begin
+     CargarLista(L);
+     InicializarVector(v);
+     RecorrerLista(v, nombreCostosa, cantSuperaDuracion, L);
+     Imprimir (cantSuperaDuracion, nombreCostosa, v, L);
+end.
