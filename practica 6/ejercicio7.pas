@@ -59,16 +59,6 @@ begin
      pri:= nuevo;
 end;
 
-procedure CargarListaCumplen (var pri: lista; L: lista);
-var
-     nuevo: lista;
-begin
-     new (nuevo);
-     nuevo^.elem:= L^.elem;
-     nuevo^.sig:= pri;
-     pri:= nuevo;
-end;
-
 
 procedure CargarLista (var pri: lista);
 var
@@ -102,9 +92,9 @@ begin
      cantNoCumplen:= 0;
      while (L <> nil) do begin
          if (CumpleFinanciar(L^.elem.costoC, L^.elem.costoM, L^.elem.categoria)) then 
-             CargarListaCumplen (Lcumple, L)
+             AgregarAdelante(Lcumple, L^.elem)
          else begin
-             CargarListaCumplen(LnoCumple, L);
+             AgregarAdelante(LnoCumple, L^.elem);
              cantNoCumplen:= cantNoCumplen + 1;
              writeln ('El proyecto de nombre: ', L^.elem.nombre, ' tiene un costo total de: ', CalcularCostoTotal(L^.elem.costoC, L^.elem.costoM):0:1, ' y no sera financiado');
          end;
