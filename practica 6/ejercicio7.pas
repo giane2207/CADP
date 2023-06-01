@@ -70,11 +70,7 @@ begin
      until (s.nombre = 'GAIA')
 end;
 
-function CalcularCostoTotal (CostoConstruccion, CostoMantenimiento: real): real;
-begin
-     CalcularCostoTotal:= CostoConstruccion + CostoMantenimiento;
-end;
-
+{a}
 function CumpleFinanciar (costoMant, costoConst: real; categoria: integer): boolean;
 var
      cumple: boolean;
@@ -84,23 +80,51 @@ begin
          cumple:= true;
      CumpleFinanciar:= cumple;
 end;
-
-procedure Procesar (var Lcumple: lista; var LnoCumple: lista; L: lista);
-var 
-     cantNoCumplen: integer;
+ 
+ {b}
+procedure Procesar (var Lcumple, LnoCumple: lista; var cantNoCumplen: integer; L: lista);
 begin
-     cantNoCumplen:= 0;
+     cantNoCumplen:= 0; 
      while (L <> nil) do begin
-         if (CumpleFinanciar(L^.elem.costoC, L^.elem.costoM, L^.elem.categoria)) then 
+         if (CumpleFinanciar(L^.elem.costoC, L^.elem.costoM, L^.elem.categoria)) then  {si la sonda cumple se agregan sus datos a una lista}
              AgregarAdelante(Lcumple, L^.elem)
          else begin
-             AgregarAdelante(LnoCumple, L^.elem);
+             AgregarAdelante(LnoCumple, L^.elem); {sino cumple se agregan a otra lista}
              cantNoCumplen:= cantNoCumplen + 1;
-             writeln ('El proyecto de nombre: ', L^.elem.nombre, ' tiene un costo total de: ', CalcularCostoTotal(L^.elem.costoC, L^.elem.costoM):0:1, ' y no sera financiado');
          end;
          L:= L^.sig; {avanzo al siguiente nodo}
      end;
-     writeln ('La cantidad de proyectos de sondas espaciales que no seran financiados por H2020 son ', cantNoCumplen) ;
+end;
+
+{c}
+procedure InformarNoCumplen (L: lista; cantNoCumplen: integer);
+var  
+     costo: real;
+begin
+     writeln ('');
+     writeln ('La cantidad de proyectos de sondas espaciales que no seran financiados por H2020 son ', cantNoCumplen, ' los cuales son nombrados a continuacion: ') ;
+     while (L <> nil) do begin
+         costo:=0;
+         costo:= costo + (L^.elem.costoC + L^.elem.costoM);
+         writeln ('');
+         writeln ('- El proyecto de nombre: ', L^.elem.nombre, ' tiene un costo total de: ', costo:0:1); 
+         L:= L^.sig;
+     end;
+end;
+
+procedure InformarCumplen (L: lista);
+var  
+     costo: real;
+begin
+     writeln ('');
+     writeln ('los proyectos de sondas espaciales que SI seran financiados por H2020 son: '); {no lo pide}
+     while (L <> nil) do begin
+         costo:=0;
+         costo:= costo + (L^.elem.costoC + L^.elem.costoM);
+         writeln ('');
+         writeln ('- El proyecto de nombre: ', L^.elem.nombre, ' tiene un costo total de: ', costo:0:1); 
+         L:= L^.sig;
+     end;
 end;
 
 {programa principal}
@@ -108,10 +132,13 @@ var
      L: lista;
      LSi: lista;
      LNo: lista;
+     cantNoCumplen: integer;
 begin
      L:= nil;
      LSi:= nil;
      LNo:= nil; 
      CargarLista (L);
-     Procesar (Lsi, LNo, L);
+     Procesar (Lsi, LNo,cantNoCumplen, L);
+     InformarNoCumplen (Lno, cantNoCumplen);
+     InformarCumplen (Lsi);
 end.
