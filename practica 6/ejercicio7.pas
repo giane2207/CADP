@@ -69,15 +69,6 @@ begin
      pri:= nuevo;
 end;
 
-procedure CargarListaNoCumplen (var pri: lista; L: lista);
-var
-     nuevo: lista;
-begin
-     new (nuevo);
-     nuevo^.elem:= L^.elem;
-     nuevo^.sig:= pri;
-     pri:= nuevo;
-end;
 
 procedure CargarLista (var pri: lista);
 var
@@ -104,27 +95,22 @@ begin
      CumpleFinanciar:= cumple;
 end;
 
-procedure Procesar (var Lcumple: lista; var LnoCumple: lista; var cantNoCumplen: integer; L: lista);
+procedure Procesar (var Lcumple: lista; var LnoCumple: lista; L: lista);
+var 
+     cantNoCumplen: integer;
 begin
      cantNoCumplen:= 0;
      while (L <> nil) do begin
          if (CumpleFinanciar(L^.elem.costoC, L^.elem.costoM, L^.elem.categoria)) then 
              CargarListaCumplen (Lcumple, L)
          else begin
-             CargarListaNoCumplen(LnoCumple, L);
+             CargarListaCumplen(LnoCumple, L);
              cantNoCumplen:= cantNoCumplen + 1;
+             writeln ('El proyecto de nombre: ', L^.elem.nombre, ' tiene un costo total de: ', CalcularCostoTotal(L^.elem.costoC, L^.elem.costoM):0:1, ' y no sera financiado');
          end;
          L:= L^.sig; {avanzo al siguiente nodo}
      end;
-end;
-
-procedure InformarNoCumplen (L: lista; cantNoCumplen: integer);
-begin
-     while (L <> nil) do begin
-         writeln ('La cantidad de proyectos de sondas espaciales que no seran financiados por H2020 son ', cantNoCumplen, ' los cuales son nombrados a continuacion: ') ;
-         writeln ('El proyecto de nombre: ', L^.elem.nombre, ' tiene un costo total de: ', CalcularCostoTotal(L^.elem.costoC, L^.elem.costoM):0:1); 
-         L:= L^.sig;
-     end;
+     writeln ('La cantidad de proyectos de sondas espaciales que no seran financiados por H2020 son ', cantNoCumplen) ;
 end;
 
 {programa principal}
@@ -132,12 +118,10 @@ var
      L: lista;
      LSi: lista;
      LNo: lista;
-     cantNoCumplen: integer;
 begin
      L:= nil;
      LSi:= nil;
      LNo:= nil; 
      CargarLista (L);
-     Procesar (Lsi, LNo,cantNoCumplen, L);
-     InformarNoCumplen (LNo, cantNoCumplen);
+     Procesar (Lsi, LNo, L);
 end.
