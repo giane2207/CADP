@@ -3,7 +3,17 @@ proyectos de investigación avanzada. Para los proyectos de sondas espaciales vi
 han determinado los siguientes criterios:
 - sólo se financiarán proyectos cuyo costo de mantenimiento no supere el costo de construcción.
 - no se financiarán proyectos espaciales que analicen ondas de radio, ya que esto puede realizarse desde la
-superficie terrestre con grandes antenas.}
+superficie terrestre con grandes antenas.
+A partir de la información disponible de las sondas espaciales (la lista generada en ejercicio 6), implementar
+un programa que:
+a. Invoque un módulo que reciba la información de una sonda espacial, y retorne si cumple o no con los
+nuevos criterios H2020.
+b. Utilizando el módulo desarrollado en a) implemente un módulo que procese la lista de sondas de la ESA y
+retorne dos listados, uno con los proyectos que cumplen con los nuevos criterios y otro con aquellos que no
+los cumplen.
+c. Invoque a un módulo que reciba una lista de proyectos de sondas espaciales e informe la cantidad y el
+costo total (construcción y mantenimiento) de los proyectos que no serán financiados por H2020. Para ello,
+utilice el módulo realizado en b.}
 
 program ej7p6;
 type
@@ -16,8 +26,6 @@ type
          end;
      
      lista = ^nodo;
-     listaCumplen = ^nodo;  {podrian hacerse de un nuevo nodo q guarde solo el costo total de la sonda}
-     listaNoCumplen = ^nodo; 
      
      nodo= record
          elem: sonda;
@@ -51,9 +59,9 @@ begin
      pri:= nuevo;
 end;
 
-procedure CargarListaCumplen (var pri: listaCumplen; L: lista);
+procedure CargarListaCumplen (var pri: lista; L: lista);
 var
-     nuevo: listaCumplen;
+     nuevo: lista;
 begin
      new (nuevo);
      nuevo^.elem:= L^.elem;
@@ -61,9 +69,9 @@ begin
      pri:= nuevo;
 end;
 
-procedure CargarListaNoCumplen (var pri: listaNoCumplen; L: lista);
+procedure CargarListaNoCumplen (var pri: lista; L: lista);
 var
-     nuevo: listaNoCumplen;
+     nuevo: lista;
 begin
      new (nuevo);
      nuevo^.elem:= L^.elem;
@@ -86,21 +94,21 @@ begin
      CalcularCostoTotal:= CostoConstruccion + CostoMantenimiento;
 end;
 
-function CumpleFinanciar (costoMant, costoConst: real): boolean;
+function CumpleFinanciar (costoMant, costoConst: real; categoria: integer): boolean;
 var
      cumple: boolean;
 begin
      cumple:= false;
-     if (costoMant <= costoConst) then 
+     if (costoMant <= costoConst) and (categoria <> 1) then {1:radio}
          cumple:= true;
      CumpleFinanciar:= cumple;
 end;
 
-procedure Procesar (var Lcumple: listaCumplen; var LnoCumple: listaNoCumplen; var cantNoCumplen: integer; L: lista);
+procedure Procesar (var Lcumple: lista; var LnoCumple: lista; var cantNoCumplen: integer; L: lista);
 begin
      cantNoCumplen:= 0;
      while (L <> nil) do begin
-         if (CumpleFinanciar(L^.elem.costoC, L^.elem.costoM)) then 
+         if (CumpleFinanciar(L^.elem.costoC, L^.elem.costoM, L^.elem.categoria)) then 
              CargarListaCumplen (Lcumple, L)
          else begin
              CargarListaNoCumplen(LnoCumple, L);
@@ -110,7 +118,7 @@ begin
      end;
 end;
 
-procedure InformarNoCumplen (L: listaNoCumplen; cantNoCumplen: integer);
+procedure InformarNoCumplen (L: lista; cantNoCumplen: integer);
 begin
      while (L <> nil) do begin
          writeln ('La cantidad de proyectos de sondas espaciales que no seran financiados por H2020 son ', cantNoCumplen, ' los cuales son nombrados a continuacion: ') ;
@@ -121,9 +129,9 @@ end;
 
 {programa principal}
 var
-     L:lista;
-     LSi: listaCumplen;
-     LNo: listaNoCumplen;
+     L: lista;
+     LSi: lista;
+     LNo: lista;
      cantNoCumplen: integer;
 begin
      L:= nil;

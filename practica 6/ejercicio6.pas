@@ -120,6 +120,7 @@ begin
          cantSondas:= cantSondas + 1;
          sumaPrecios:= CalcularCostoTotal(L^.elem.costoC, L^.elem.costoM);
          totalMeses:= totalMeses + L^.elem.duracion;
+         L:=L^.sig;
      end;
      dPromedio:= DuracionPromedio (totalMeses, cantSondas);
      cPromedio:= CostoPromedio(sumaPrecios, cantSondas);
@@ -163,7 +164,7 @@ begin
          SondaCostosa (maxPrecio, nombreCostosa, CostoSonda, L^.elem.nombre);
          CargarVector (v, L^.elem.categoria);
          if (superaCostoPromedio(costoSonda, costoPromedio)) then 
-             writeln ('el nombre de las sondas cuyo costo de construcción supera el costo promedio entre todas las sondas es: ', L^.elem.nombre, ' con un costo de: $', costoSonda);
+             writeln ('el nombre de las sondas cuyo costo de construccion supera el costo promedio entre todas las sondas es: ', L^.elem.nombre, ' con un costo de: $', costoSonda:0:1);
          if (superaDuracionPromedio(L^.elem.duracion, duracionPromedio)) then
              cantSuperaDuracion:= cantSuperaDuracion +1;
          L:= L^.sig;
@@ -181,9 +182,12 @@ end;
 procedure Imprimir (cantSuperaDuracion: integer; nombreCostosa: string; v: vectorCont; L:lista);
 begin
     if (L <> nil) then begin
+         writeln('');
          ImprimirVector (v);
+         writeln('');
          writeln ('El nombre de la sonda mas costosa es: ', nombreCostosa);
-         writeln ('La cantidad de sondas cuya duración estimada supera la duración promedio de todas las sondas es: ', cantSuperaDuracion);
+         writeln('');
+         writeln ('La cantidad de sondas cuya duracion estimada supera la duracion promedio de todas las sondas es: ', cantSuperaDuracion);
      end;
 end;
 
