@@ -112,20 +112,6 @@ begin
      end;
 end;
 
-procedure InformarCumplen (L: lista);
-var  
-     costo: real;
-begin
-     writeln ('');
-     writeln ('los proyectos de sondas espaciales que SI seran financiados por H2020 son: '); {no lo pide}
-     while (L <> nil) do begin
-         costo:=0;
-         costo:= costo + (L^.elem.costoC + L^.elem.costoM);
-         writeln ('');
-         writeln ('- El proyecto de nombre: ', L^.elem.nombre, ' tiene un costo total de: ', costo:0:1); 
-         L:= L^.sig;
-     end;
-end;
 
 {programa principal}
 var
@@ -140,5 +126,4 @@ begin
      CargarLista (L);
      Procesar (Lsi, LNo,cantNoCumplen, L);
      InformarNoCumplen (Lno, cantNoCumplen);
-     InformarCumplen (Lsi);
 end.
